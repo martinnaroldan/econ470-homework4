@@ -1,8 +1,8 @@
 
 # Meta --------------------------------------------------------------------
-# Author:        Martinna Roldan
-# Date Created:  3/26/2025
-# Date Edited:   
+# Author:        Martinna R.
+# Date Created:  03/25/2025
+# Date Edited:   04/09/2025
 # Notes:         R file to build Medicare Advantage dataset
 
 
@@ -50,9 +50,10 @@ final.data <- final.data %>%
   left_join( star.ratings %>%
                select(-contract_name, -org_type, -org_marketing), 
              by=c("contractid", "year")) %>%
-  left_join( ma.penetration.data %>% ungroup() %>% select(-ssa) %>%
-               rename(state_long=state, county_long=county), 
-             by=c("fips", "year"))
+  left_join(ma.penetration.data %>% ungroup() %>%
+            select(-ssa) %>%
+            dplyr::rename(state_long = state, county_long = county),
+          by = c("fips", "year"))
 
 # calculate star rating (Part C rating if plan doesn't offer part D, otherwise Part D rating if available)
 final.data <- final.data %>% ungroup() %>%
@@ -65,13 +66,17 @@ final.data <- final.data %>% ungroup() %>%
            ))
 
 
+
 final.state <- final.data %>% 
   group_by(state) %>% 
   summarize(state_name=last(state_long, na.rm=TRUE))
 
+names(final.state)
+
 final.data <- final.data %>%
   left_join(final.state,
             by=c("state"))
+
 
 final.data <- final.data %>%
   left_join( plan.premiums,
@@ -131,5 +136,6 @@ final.data <- final.data %>%
 
 # save final dataset
 write_rds(final.data,"data/output/final_ma_data.rds")
+
 
 

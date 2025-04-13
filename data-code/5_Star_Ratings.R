@@ -2,8 +2,8 @@
 ## Read in MA star rating data 
 ##############################################################################
 
-if (!require("pacman")) install.packages("pacman") 
-pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata)
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata, plyr)
 source("data-code/rating_variables.R")
 
 ## Assign yearly datasets and clean star rating information
@@ -13,6 +13,7 @@ ma.path.2010a <- paste0("data/input/ma-star-ratings/2010/2010_Part_C_Report_Card
 star.data.2010a <- read_csv(ma.path.2010a,
                          skip=4,
                          col_names=rating.vars.2010)
+
 star.data.2010a <- as_tibble(sapply(star.data.2010a,plyr::mapvalues,
                                  from=c("1 out of 5 stars","2 out of 5 stars","3 out of 5 stars",
                                         "4 out of 5 stars","5 stars"), 
@@ -237,3 +238,6 @@ star.ratings <- star.ratings %>%
   mutate(new_contract)
   
 write_rds(star.ratings,"data/output/star_ratings.rds")
+
+
+
